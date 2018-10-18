@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Data.Sqlite;
+using System.Text;
+using Dapper;
+using StudentExercises.Data;
 
 namespace StudentExercises {
     class Program {
@@ -68,7 +72,7 @@ namespace StudentExercises {
                         matchingExercises.Add(student.FirstName);
                     }
                 }
-                Console.WriteLine($"{exercise.Name} is assigned to: {String.Join(", ", matchingExercises)}");
+                // Console.WriteLine($"{exercise.ExerciseName} is assigned to: {String.Join(", ", matchingExercises)}");
             }
             // Student Exercises Part 2
             List<Instructor> instructors = new List<Instructor>()
@@ -81,7 +85,7 @@ namespace StudentExercises {
             };
             //List exercises for the JavaScript language by using the Where() LINQ method.
             IEnumerable<Exercise> javascriptExercises = from exercise in exercises
-                where exercise.Language == "Javascript"
+                where exercise.ExerciseLanguage == "Javascript"
                 select exercise;
             //List students in a particular cohort by using the Where() LINQ method.
             List<Student> cohort27Students = (from student in students
@@ -126,10 +130,18 @@ namespace StudentExercises {
                 };
                 foreach (var total in totalStudents)
                 {
-                    Console.WriteLine($"Cohort {total.Cohort.Name} has {total.Students.Count()} students");
+                    // Console.WriteLine($"Cohort {total.Cohort.Name} has {total.Students.Count()} students");
                 }
+            
+            //Using Dapper to query the database
+            SqliteConnection db = DatabaseInterface.Connection;
+            DatabaseInterface.CheckExerciseTable();
 
-            Console.WriteLine ("Hello World!");
+            List<Exercise> exercisesQuery = db.Query<Exercise>(@"SELECT * FROM Exercise").ToList();
+            exercisesQuery.ForEach(ex => Console.WriteLine($"{ex.ExerciseName}"));
+
+            List<Exercise> javascriptExercisesQuery = db.Query<Exercise>(@"SELECT * FROM Exercise WHERE ExerciseLanguage == 'Javascript'").ToList();
+            javascriptExercisesQuery.ForEach(ex =>  Console.WriteLine($"This is a Javascript exercise {ex.ExerciseName}"));
         }
     }
 }
