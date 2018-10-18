@@ -15,8 +15,8 @@ namespace DapperDepartments.Data
         {
             get
             {
-                string _connectionString = $"Data Source=./departments.db";
-                return new SqliteConnection(_connectionString);
+                string connectionString = $"Data Source=./departments.db";
+                return new SqliteConnection(connectionString);
             }
         }
 
@@ -27,13 +27,24 @@ namespace DapperDepartments.Data
 
             try
             {
+                /*
+                    new variable that is of type List of Department.
+                    Query is Dapper method to be able to query the database
+                    query also has to be typed of what you expect to get back 
+                    what should be created from that data you're querying? 
+                    In this case, department instances from the data that comes back
+                    It will create object instances based on the cs models we have created - so for example, the db has 3 departments, so we get back 3 instances of departments with the Id and DeptName back in each instance with the data from the db
+                 */
                 List<Department> departments = db.Query<Department>
+                // select = what to do on the database side 
                     ("SELECT Id FROM Department").ToList();
             }
+            // if the database table doesn't exist, check the exception and if there is no table, create the table
             catch (System.Exception ex)
             {
                 if (ex.Message.Contains("no such table"))
                 {
+                    // execute statement to make a new table into database
                     db.Execute(@"CREATE TABLE `Department` (
                         `Id` INTEGER PRIMARY KEY AUTOINCREMENT,
                         `DeptName` TEXT NOT NULL
