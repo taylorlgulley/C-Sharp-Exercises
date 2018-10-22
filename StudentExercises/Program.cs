@@ -113,7 +113,7 @@ namespace StudentExercises {
             // GroupBy gives you a collection of groups - each group has something that it's being grouped by (the key). The group itself is the list of all of the values of the group. Returns a collection of groups.
             // collection of groups (numberOfStudentsInEachCohort)
             // METHOD WAY
-            var numberOfStudentsInEachCohort = students.GroupBy(c => c.Cohort.Name);
+            var numberOfStudentsInEachCohort = students.GroupBy(c => c.Cohort.CohortName);
             // looks at every group of students
             foreach (var studentGroup in numberOfStudentsInEachCohort)
             {
@@ -136,12 +136,24 @@ namespace StudentExercises {
             //Using Dapper to query the database
             SqliteConnection db = DatabaseInterface.Connection;
             DatabaseInterface.CheckExerciseTable();
+            DatabaseInterface.CheckInstructorsTable();
+            DatabaseInterface.CheckCohortsTable();
 
             List<Exercise> exercisesQuery = db.Query<Exercise>(@"SELECT * FROM Exercise").ToList();
             exercisesQuery.ForEach(ex => Console.WriteLine($"{ex.ExerciseName}"));
 
+            db.Execute($@"
+            INSERT INTO Exercise (ExerciseName, ExerciseLanguage) VALUES ('DOM', 'Javascript')
+            ");
+
             List<Exercise> javascriptExercisesQuery = db.Query<Exercise>(@"SELECT * FROM Exercise WHERE ExerciseLanguage == 'Javascript'").ToList();
             javascriptExercisesQuery.ForEach(ex =>  Console.WriteLine($"This is a Javascript exercise {ex.ExerciseName}"));
+
+            List<Instructor> instructorQuery = db.Query<Instructor>(@"SELECT * FROM Instructor").ToList();
+            instructorQuery.ForEach(ins => Console.WriteLine($"{ins.FirstName} {ins.LastName}"));
+
+            List<Cohort> cohortQuery = db.Query<Cohort>(@"SELECT * FROM Cohort").ToList();
+            cohortQuery.ForEach(co => Console.WriteLine($"{co.CohortName}"));
         }
     }
 }

@@ -57,5 +57,69 @@ namespace StudentExercises.Data
                 }
             }
         }
+        public static void CheckInstructorsTable()
+        {
+            SqliteConnection db = DatabaseInterface.Connection;
+
+            try
+            {
+                List<Instructor> instructorsQuery = db.Query<Instructor>
+                // select = what to do on the database side 
+                    ("SELECT Id FROM Instructor").ToList();
+            }
+            // if the database table doesn't exist, check the exception and if there is no table, create the table
+            catch (System.Exception ex)
+            {
+                if (ex.Message.Contains("no such table"))
+                {
+                    // execute statement to make a new table into database
+                    db.Execute(@"CREATE TABLE `Instructor` (
+                        `Id` INTEGER PRIMARY KEY AUTOINCREMENT,
+	                    'FirstName' TEXT NOT NULL,
+	                    'LastName' TEXT NOT NULL,
+	                    'CohortId' INTEGER NOT NULL,
+		                'SlackHandle' TEXT NOT NULL,
+                        FOREIGN KEY (CohortId) REFERENCES Cohort(Id)
+                    )");
+
+                    db.Execute(@"
+                        INSERT INTO Instructor (FirstName, LastName, CohortId, SlackHandle) VALUES ('Steve', 'Brownlee', 2, 'coach');
+                        INSERT INTO Instructor (FirstName, LastName, CohortId, SlackHandle) VALUES ('Meg', 'Ducharme', 2, 'meg1');
+                        INSERT INTO Instructor (FirstName, LastName, CohortId, SlackHandle) VALUES ('Andy', 'Collins', 2, 'andy1');
+                        INSERT INTO Instructor(FirstName, LastName, CohortId, SlackHandle) VALUES ('Kimmy', 'Bird', 2, 'kimmy1');
+                    ");
+                }
+            }
+        }
+        public static void CheckCohortsTable()
+        {
+            SqliteConnection db = DatabaseInterface.Connection;
+
+            try
+            {
+                List<Cohort> cohortsQuery = db.Query<Cohort>
+                // select = what to do on the database side 
+                    ("SELECT Id FROM Cohort").ToList();
+            }
+            // if the database table doesn't exist, check the exception and if there is no table, create the table
+            catch (System.Exception ex)
+            {
+                if (ex.Message.Contains("no such table"))
+                {
+                    // execute statement to make a new table into database
+                    db.Execute(@"CREATE TABLE `Cohort` (
+                        `Id` INTEGER PRIMARY KEY AUTOINCREMENT,
+	                    'CohortName' TEXT NOT NULL
+                    )");
+
+                    db.Execute(@"
+                        INSERT INTO Cohort (CohortName) VALUES ('Day Cohort 26');
+                        INSERT INTO Cohort (CohortName) VALUES ('Day Cohort 27');
+                        INSERT INTO Cohort (CohortName) VALUES ('Day Cohort 28');
+                        INSERT INTO Cohort (CohortName) VALUES ('Evening Cohort 8');
+                    ");
+                }
+            }
+        }
     }
 }

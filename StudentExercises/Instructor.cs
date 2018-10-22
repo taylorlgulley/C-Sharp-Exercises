@@ -19,5 +19,6 @@ namespace StudentExercises
         public void AssignExercise(Student student, Exercise exercise) {
             student.StudentExercises.Add(exercise);
         }
+        public Instructor(){}
     }
 }

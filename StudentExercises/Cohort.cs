@@ -7,10 +7,11 @@ namespace StudentExercises
     {
         public Cohort(string name)
         {
-            Name = name;
+            CohortName = name;
         }
-        public string Name { get; set; }
+        public string CohortName { get; set; }
         public List<Student> ListOfStudents = new List<Student>();
         public List<Instructor> ListOfInstructors = new List<Instructor>();
+        public Cohort(){}
     }
 }
